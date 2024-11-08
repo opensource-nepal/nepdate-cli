@@ -1,118 +1,88 @@
-## nepdate-cli: Bikram Sambat Date Converter
+# nepdate-cli
 
-nepdate-cli is a command-line tool for displaying and converting dates between the Bikram Sambat (Vikram Samvat) and Gregorian calendars. It's a simple utility designed for easy interaction with these two calendar systems.
+`nepdate-cli` is a simple command-line program built using the `bikram` library to convert dates between Bikram Sambat (Nepali calendar) and Gregorian dates.
 
-> [!NOTE]  
-> Rust port is available at rust branch of this repository. if you want to install just binary using cargo use
-> ``` cargo install nepdate-cli ```   or use as dependency on Cargo.toml file.  ``` nepdate-cli = "0.1.3" ```
-> check https://github.com/opensource-nepal/nepdate-cli/blob/rust/src/bikram.rs for available functions or https://github.com/opensource-nepal/nepdate-cli/blob/rust/src/main.rs for example uses.
-> read readme file for rust https://github.com/opensource-nepal/nepdate-cli/blob/rust/README.md
+## Features
 
-### Features
+- Convert Gregorian dates to Bikram Sambat.
+- Convert Bikram Sambat dates to Gregorian.
 
--   Display the current Bikram Sambat date.
--   Convert dates between Bikram Sambat and Gregorian calendars.
--  Supports very long date range.
+## Installation and Setup
 
-### Installation
+### Prerequisites
 
-There are two installation methods available: using a Debian package or compiling from source.
+- [Rust](https://www.rust-lang.org/) programming language
+- Cargo (Rust package manager). install instruction for rust [HERE](https://www.rust-lang.org/tools/install).
 
-#### From Debian Package
+### Clone the Repository
 
-1.  **Download the latest `.deb` file** from the [releases](https://github.com/opensource-nepal/nepdate-cli/releases) page.
-2.  **Install the package** using `dpkg`:
+First, clone the repository:
 
-Bash
-
-```
-sudo dpkg -i nepdate-cli_1.0.0_amd64.deb
-
-```
-
-Replace `nepdate-cli_1.0.0_amd64.deb` with the filename of the downloaded package.
-
-
-#### From Source
-
-1.  Clone the repository:
-
-Bash
-```
-git clone https://github.com/opensource-nepal/nepdate-cli.git
+```bash
+git clone --branch rust https://github.com/opensource-nepal/nepdate-cli.git
 cd nepdate-cli
 ```
 
-2.  Install dependencies:
+### Build the Program
 
-Bash
+1. Make sure to give execution permissions to the `build.sh` script:
+    ```bash
+    chmod +x build.sh
+    ```
 
-```
-sudo apt-get update
-sudo apt-get install -y cmake build-essential debhelper devscripts
+2. Run the `build.sh` script to build the program and set up the build folder:
+    ```bash
+    ./build.sh
+    ```
 
-```
+This script will:
+- Compile the program in release mode and store the output in the `target` directory.
+- Display the path to the executable.
+- Test the program by running it.
 
-* packages debhelper  and devscripts are for building debian installer package.
+The executable path should be printed in the terminal, and after 2 seconds, the program will be test run automatically.
 
-3.  Build and install:
+## Install using cargo 
 
-Bash
+```cargo install nepdate-cli ```
+Running the above command will globally install the nepdate-cli binary.
 
-```
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
+## using library in other applications
+Run the following Cargo command in your project directory:
 
-```
-* if need to build deb package, run ``` dpkg-buildpackage -b``` after ```make```
+```cargo add nepdate-cli```
 
+Or add the following line to your Cargo.toml:
 
-### Usage
+``` nepdate-cli = "0.1.3" ```
+nepdate-test-app folder has example of an application. ```use bikram::bikram::Bikram;``` should import bikram library after adding nepdate-cli dependency in application.
 
-Once installed, you can use nepdate-cli from the command line. Here are some basic commands:
+## Usage
 
--   Display the current Bikram Sambat date:
+After building the program, you can use it to convert dates between the two calendar systems.
 
-Bash
-
-```
-nepdate-cli
-```
-output:
-![Screenshot_select-area_20240810182013](https://github.com/user-attachments/assets/7b0f2e84-ec09-44a0-9edc-37bd46a682c4)
-* Convert to Bikram Sambat
-```
- nepdate-cli --conv --tobs 2024 8 10
-```
-output:
-![Screenshot_select-area_20240810182157](https://github.com/user-attachments/assets/474ff597-829e-4f48-8d16-079673f902fd)
-
-
-* Convert a Bikram Sambat date to Gregorian:
-```
-nepdate-cli --conv --toad 2081 4 26  
+### Convert to Nepali Date (Bikram Sambat):
 
 ```
-output:
-![Screenshot_select-area_20240810182318](https://github.com/user-attachments/assets/308500ee-15dc-42a3-a1d5-9d5d729b267b)
+./target/release/nepdate-cli --conv --tobs <year> <month> <day>
+```
 
+Example:
+```
+./target/release/nepdate-cli --conv --tobs 2024 10 18
+```
 
-### ** Replace the date strings with the date you want to convert.
+### Convert to Gregorian Date:
 
-## Contributing
+```
+./target/release/nepdate-cli --conv --toad <year> <month> <day>
+```
 
-Contributions are welcome! If you have any bug reports or feature requests, please open an issue on the GitHub [repository](https://github.com/opensource-nepal/nepdate-cli).
+Example:
+```
+./target/release/nepdate-cli --conv --toad 2081 6 1
+```
 
-Here's a quick guide to contributing code:
-
-1.  Fork the repository.
-3.  Create a new branch for your changes.
-5.  Commit your changes and push them to your fork.
-7.  Open a pull request against the main branch of the original repository.
-    
 
 ### License
 
@@ -120,4 +90,4 @@ nepdate-cli is released under the [GNU General Public License v3.0](https://www.
 
 ### Contact
 
-For any inquiries, you can reach out to [khumnath cg](https://khumnath.com.np) .
+For any inquiries, you can reach out to [khumnath](https://khumnath.com.np) cg.
