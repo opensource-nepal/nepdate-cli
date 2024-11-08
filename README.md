@@ -5,8 +5,8 @@ nepdate-cli is a command-line tool for displaying and converting dates between t
 > [!NOTE]  
 > Rust port is available at rust branch of this repository. if you want to install just binary using cargo use
 > ``` cargo install nepdate-cli ```   or use as dependency on Cargo.toml file.  ``` nepdate-cli = "0.1.3" ```
-> check https://github.com/khumnath/nepdate-cli/blob/rust/src/bikram.rs for available functions or https://github.com/khumnath/nepdate-cli/blob/rust/src/main.rs for example uses.
-> read readme file for rust https://github.com/khumnath/nepdate-cli/blob/rust/README.md
+> check https://github.com/opensource-nepal/nepdate-cli/blob/rust/src/bikram.rs for available functions or https://github.com/opensource-nepal/nepdate-cli/blob/rust/src/main.rs for example uses.
+> read readme file for rust https://github.com/opensource-nepal/nepdate-cli/blob/rust/README.md
 
 ### Features
 
@@ -20,7 +20,7 @@ There are two installation methods available: using a Debian package or compilin
 
 #### From Debian Package
 
-1.  **Download the latest `.deb` file** from the [releases](https://github.com/khumnath/nepdate-cli/releases) page.
+1.  **Download the latest `.deb` file** from the [releases](https://github.com/opensource-nepal/nepdate-cli/releases) page.
 2.  **Install the package** using `dpkg`:
 
 Bash
@@ -39,7 +39,7 @@ Replace `nepdate-cli_1.0.0_amd64.deb` with the filename of the downloaded packag
 
 Bash
 ```
-git clone https://github.com/khumnath/nepdate-cli.git
+git clone https://github.com/opensource-nepal/nepdate-cli.git
 cd nepdate-cli
 ```
 
@@ -104,7 +104,7 @@ output:
 
 ## Contributing
 
-Contributions are welcome! If you have any bug reports or feature requests, please open an issue on the GitHub [repository](https://github.com/khumnath/nepdate-cli).
+Contributions are welcome! If you have any bug reports or feature requests, please open an issue on the GitHub [repository](https://github.com/opensource-nepal/nepdate-cli).
 
 Here's a quick guide to contributing code:
 
@@ -120,4 +120,4 @@ nepdate-cli is released under the [GNU General Public License v3.0](https://www.
 
 ### Contact
 
-For any inquiries, you can reach out to [khumnath](https://khumnath.com.np) cg.
+For any inquiries, you can reach out to [khumnath cg](https://khumnath.com.np) .
