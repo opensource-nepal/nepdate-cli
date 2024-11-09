@@ -67,8 +67,8 @@ make
 sudo make install
 
 ```
-* if need to build deb package, run ``` dpkg-buildpackage -b``` after ```make```
-
+* if need to build deb package with signing, run ``` dpkg-buildpackage -b``` from project root directory.(you have to edit email address to yours in files in /debian folder.)
+* ``` dpkg-buildpackage -b -us -uc``` command builds debian package without signing.
 
 ### Usage
 
@@ -98,6 +98,14 @@ nepdate-cli --conv --toad 2081 4 26
 ```
 output:
 ![Screenshot_select-area_20240810182318](https://github.com/user-attachments/assets/308500ee-15dc-42a3-a1d5-9d5d729b267b)
+
+* Show only Bikram sambat date:
+```
+nepdate-cli --today
+
+```
+output:
+![Screenshot_select-area_20241109224159](https://github.com/user-attachments/assets/be8fdad0-9951-4cbd-a39e-cdfb6d37e46c)
 
 
 ### ** Replace the date strings with the date you want to convert.
