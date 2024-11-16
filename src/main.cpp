@@ -196,9 +196,9 @@ int main(int argc, char *argv[]) {
                   << "\e[0m" << std::endl;
 
         std::cerr << "Usage: \n"
-                  << "  \e[31mShow today's date: ./ndate --today [--unicode] [--format format_string]\n\e[0m"
-                  << "  \e[31mConvert to Bikram Sambat Date: ./ndate --tobs year month day [--unicode] [--format format_string]\n\e[0m"
-                  << "  \e[31mConvert to Gregorian Date: ./ndate --toad year month day [--unicode] [--format format_string]\n\e[0m"
+                  << "  \e[31mShow today's date: ./nepdate-cli --today [--unicode] [--format format_string]\n\e[0m"
+                  << "  \e[31mConvert to Bikram Sambat Date: ./nepdate-cli --tobs year month day [--unicode] [--format format_string]\n\e[0m"
+                  << "  \e[31mConvert to Gregorian Date: ./nepdate-cli --toad year month day [--unicode] [--format format_string]\n\e[0m"
                   << "Options:\n"
                   << "  \e[31m--unicode : Display the date in Unicode format (Devanagari script).\e[0m\n"
                   << "  \e[31m--format format_string : Specify a custom format for the date (e.g., 'y-m-d', 'd-M-y'). \e[0mDefault: 'y-m-d'\n"
@@ -209,9 +209,9 @@ int main(int argc, char *argv[]) {
                   << "  \e[31mw : Weekday name\n"
                   << "  \e[31mM : Month name\n\e[0m"
                   << "\nExample commands:\n"
-                  << "  \e[31m./ndate --today --unicode --format 'd-M-y'        : Show today's date in Unicode with custom format.\n"
-                  << "  ./ndate --tobs 2024 11 15 --unicode --format 'y-m-d' : Convert a Gregorian date to Bikram Sambat date.\n"
-                  << "  ./ndate --toad 2081 8 30 --unicode --format 'y/m/d'  : Convert a Nepali date to Gregorian date.\n\e[0m"
+                  << "  \e[31m./nepdate-cli --today --unicode --format 'd-M-y'        : Show today's date in Unicode with custom format.\n"
+                  << "  ./nepdate-cli --tobs 2024 11 15 --unicode --format 'y-m-d' : Convert a Gregorian date to Bikram Sambat date.\n"
+                  << "  ./nepdate-cli --toad 2081 8 30 --unicode --format 'y/m/d'  : Convert a Nepali date to Gregorian date.\n\e[0m"
                   << "\e[35mFor more information, visit: https://github.com/opensource-nepal/nepdate-cli\n\e[0m";
 
         return 0;
