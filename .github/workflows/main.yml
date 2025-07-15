@@ -26,6 +26,9 @@ jobs:
         cd build
         cmake ..
         make
+        echo "Build completed successfully."
+        echo "testing build output"
+        make run
 
     - name: Build Debian Package
       run: |

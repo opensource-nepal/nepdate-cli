@@ -27,3 +27,6 @@ jobs:
         cd build
         cmake ..
         make
+        echo "Build completed successfully."
+        echo "Testing build output"
+        make run
