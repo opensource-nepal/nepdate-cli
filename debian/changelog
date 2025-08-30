@@ -1,3 +1,9 @@
+nepdate-cli (1.1.0-1) stable; urgency=medium
+
+  * New release from tag v1.1.0.
+
+ -- GitHub Actions <actions@github.com>  Sat, 30 Aug 2025 06:56:16 +0000
+
 nepdate-cli (1.0.2) stable; urgency=medium
 
   * update with date output format
