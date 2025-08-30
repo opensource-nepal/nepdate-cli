@@ -29,49 +29,47 @@ jobs:
         export DEBEMAIL="actions@github.com"
         export DEBFULLNAME="GitHub Actions"
         
-        # This command finds the last tag, derives the new version from the current tag,
-        # and adds all commit subjects since the last tag to a new changelog entry.
-        # The debian/changelog file is modified directly in the workspace for the build.
-        gbp dch --auto --ignore-branch
+        # Get the version from the tag (e.g., v1.1.0 -> 1.1.0)
+        VERSION=${{ github.ref_name }}
+        VERSION=${VERSION#v}
+        
+        # Explicitly create a new changelog entry with the correct version.
+        # This is more reliable than auto-detection.
+        dch --newversion "${VERSION}-1" --distribution "stable" "New release from tag ${{ github.ref_name }}."
         
         echo "Successfully updated changelog in workspace:"
         head -n 10 debian/changelog
 
     - name: Build Debian Package
-      # This command now uses the changelog file that was just updated in the workspace
+      # This command will now use the correct version from the updated changelog
       run: dpkg-buildpackage -b -us -uc
-
-    - name: Build the standalone application
-      run: |
-        mkdir build
-        cd build
-        cmake ..
-        make
 
     - name: Prepare Release Artifacts
       run: |
         # Create a directory to store all assets for the release
         mkdir -p release_assets
         
-        # Move the compiled executable from the build/bin directory
-        mv build/bin/nepdate-cli release_assets/nepdate-cli
+        # Copy the executable that was built during the deb package creation.
+        # The standard location is in the debian/<package-name> directory.
+        cp debian/nepdate-cli/usr/bin/nepdate-cli release_assets/nepdate-cli
         
         # Find, move, and rename the generated .deb package
-        ORIGINAL_DEB=$(find .. -maxdepth 1 -name "*.deb" | head -n 1)
+        ORIGINAL_DEB=$(find .. -maxdepth 1 -name "nepdate-cli_*.deb" | head -n 1)
         if [ -z "$ORIGINAL_DEB" ]; then
           echo "::error:: Debian package not found in parent directory."
           exit 1
         fi
-        # Assumes format: package_version_arch.deb
-        ARCH=$(basename "$ORIGINAL_DEB" | cut -d'_' -f3)
-        NEW_DEB_NAME="nepdate-cli_${{ github.ref_name }}_${ARCH}"
+        
+        # Reliably get the architecture from the package metadata
+        ARCH=$(dpkg-deb -f "$ORIGINAL_DEB" Architecture)
+        NEW_DEB_NAME="nepdate-cli_${{ github.ref_name }}_${ARCH}.deb"
         mv "$ORIGINAL_DEB" "release_assets/$NEW_DEB_NAME"
         echo "Renamed Debian package to: $NEW_DEB_NAME"
         
         # Create a zip archive of the source code
         git archive -o release_assets/source-code-${{ github.ref_name }}.zip HEAD
         
-        # Generate checksums for the .deb file
+        # Generate checksums for the renamed .deb file
         cd release_assets
         for file in *.deb; do
           md5sum "$file" > "${file}.md5"
