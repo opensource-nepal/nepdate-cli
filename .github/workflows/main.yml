@@ -25,6 +25,10 @@ jobs:
 
     - name: Update Debian Changelog from Git History
       run: |
+        # Set maintainer details for dch to use in the changelog
+        export DEBEMAIL="actions@github.com"
+        export DEBFULLNAME="GitHub Actions"
+        
         # This command finds the last tag, derives the new version from the current tag,
         # and adds all commit subjects since the last tag to a new changelog entry.
         # The debian/changelog file is modified directly in the workspace for the build.
