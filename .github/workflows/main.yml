@@ -1,64 +1,106 @@
-name: Build Debian Packages on Tag
+name: Create Release and Debian Package
 
 on:
   push:
     tags:
-      - 'v*'
-    branches:
-      - 'release'
+      - 'v*' # Trigger the workflow on tags starting with 'v'
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to create releases and push commits
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        # Fetch all history for all tags and branches, required for changelog generation
+        fetch-depth: 0
 
-    - name: Install CMake and dependencies
+    - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake build-essential debhelper devscripts gnupg jq curl
+        sudo apt-get install -y cmake build-essential debhelper devscripts git-buildpackage
 
-    - name: Build
+    - name: Update Debian Changelog from Git History
+      run: |
+        # This command finds the last tag, derives the new version from the current tag,
+        # and adds all commit subjects since the last tag to a new changelog entry.
+        # The debian/changelog file is modified directly in the workspace for the build.
+        gbp dch --auto --ignore-branch
+        
+        echo "Successfully updated changelog in workspace:"
+        head -n 10 debian/changelog
+
+    - name: Build the application
       run: |
         mkdir build
         cd build
         cmake ..
         make
-        echo "Build completed successfully."
-        echo "testing build output"
-        make run
 
     - name: Build Debian Package
-      run: |
-        dpkg-buildpackage -b
+      # This command now uses the changelog file that was just updated in the workspace
+      run: dpkg-buildpackage -b -us -uc
 
-    - name: Move DEB Files to Artifacts Directory
+    - name: Prepare Release Artifacts
       run: |
-        mkdir -p build/artifacts
-        mv ../*.deb build/artifacts/
-
-    - name: Get Release Upload URL
-      id: get_release
-      run: |
-        TAG_NAME=${{ github.ref_name }}
-        RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG_NAME")
-        echo "Upload URL: $(echo $RESPONSE | jq -r .upload_url | sed 's/{.*//')"
-        echo "upload_url=$(echo $RESPONSE | jq -r .upload_url | sed 's/{.*//')" >> $GITHUB_ENV
-
-    - name: Upload DEB Files to Release
-      run: |
-        for file in build/artifacts/*.deb; do
-          curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary @"$file" \
-            "$upload_url?name=$(basename $file)"
+        # Create a directory to store all assets for the release
+        mkdir -p release_assets
+        
+        # Move the compiled executable
+        mv build/nepdate-cli release_assets/nepdate-cli
+        
+        # Move the generated .deb package
+        mv ../*.deb release_assets/
+        
+        # Create a zip archive of the source code
+        git archive -o release_assets/source-code-${{ github.ref_name }}.zip HEAD
+        
+        # Generate checksums for the .deb file
+        cd release_assets
+        for file in *.deb; do
+          md5sum "$file" > "${file}.md5"
+          sha256sum "$file" > "${file}.sha256"
         done
-      env:
-        upload_url: ${{ env.upload_url }}
+        cd ..
+        
+        echo "Prepared assets:"
+        ls -l release_assets
 
-    - name: Cleanup
+    - name: Create GitHub Release and Upload Artifacts
+      uses: softprops/action-gh-release@v1
+      with:
+        # This will upload all files from the release_assets directory
+        files: release_assets/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Commit Updated Changelog to Repository
       run: |
-        rm -rf build
+        # Store the updated changelog temporarily
+        mv debian/changelog /tmp/changelog
+        
+        # Configure git user for the commit
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # The checkout is in a detached HEAD state. We need to switch to the branch.
+        # Replace 'main' with your repository's default branch if it's different.
+        git checkout main
+        
+        # Restore the updated changelog
+        mv /tmp/changelog debian/changelog
+        
+        # Add, commit, and push the updated changelog.
+        # The [skip ci] in the message prevents this commit from re-triggering the workflow.
+        git add debian/changelog
+        # Check if there are changes to commit to avoid an error if the file is unchanged
+        if git diff --staged --quiet; then
+          echo "Changelog is already up-to-date."
+        else
+          git commit -m "Chore: Update debian/changelog for release ${{ github.ref_name }} [skip ci]"
+          git push
+        fi
+
