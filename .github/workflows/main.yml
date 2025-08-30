@@ -80,11 +80,27 @@ jobs:
         echo "Prepared assets:"
         ls -l release_assets
 
+    - name: Generate Release Notes from Changelog
+      id: generate_notes
+      run: |
+        # Use dpkg-parsechangelog to extract the "Changes" field from the latest entry
+        # in the debian/changelog file. This text will be used as the body of the release.
+        CHANGELOG_BODY=$(dpkg-parsechangelog --show-field Changes -l debian/changelog)
+        
+        # Format for GitHub Actions multiline output
+        echo "CHANGELOG_BODY<<EOF" >> $GITHUB_OUTPUT
+        echo "${CHANGELOG_BODY}" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
     - name: Create GitHub Release and Upload Artifacts
       uses: softprops/action-gh-release@v1
       with:
         # This will upload all files from the release_assets directory
         files: release_assets/*
+        body: |
+          ## Changelog
+          
+          ${{ steps.generate_notes.outputs.CHANGELOG_BODY }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
