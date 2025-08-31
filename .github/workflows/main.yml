@@ -103,30 +103,6 @@ jobs:
           ${{ steps.generate_notes.outputs.CHANGELOG_BODY }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Commit Updated Changelog to Repository
-      run: |
-        # Store the updated changelog temporarily
-        mv debian/changelog /tmp/changelog
-        
-        # Configure git user for the commit
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        
-        # The checkout is in a detached HEAD state. We need to switch to the branch.
-        # Replace 'main' with your repository's default branch if it's different.
-        git checkout main
-        
-        # Restore the updated changelog
-        mv /tmp/changelog debian/changelog
-        
-        # Add, commit, and push the updated changelog.
-        # The [skip ci] in the message prevents this commit from re-triggering the workflow.
-        git add debian/changelog
-        # Check if there are changes to commit to avoid an error if the file is unchanged
-        if git diff --staged --quiet; then
-          echo "Changelog is already up-to-date."
-        else
           git commit -m "Chore: Update debian/changelog for release ${{ github.ref_name }} [skip ci]"
           git push
         fi
